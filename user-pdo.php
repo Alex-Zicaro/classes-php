@@ -16,6 +16,8 @@ class User{
     }
 
 
-    public function register($login,)
+    public function register($login,$password,$email,$firstname,$lastname){
+        
+    }
 
 }
