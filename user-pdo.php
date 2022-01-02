@@ -3,9 +3,9 @@ session_start();
 
 class Database
 {
+// On peut redéclarer les propriétés publics ou protégés, mais pas ceux privés
+    // attribut = protected et protected ne peuvent pas être modfier en-dehors de la classe
 
-    // attribut = protected  = ne sortira pas du fichier
-    // attribut = private  = ne sortira pas de la classe
 
     private static $dbName = 'classes';
     private static $dbHost = 'localhost';
@@ -155,7 +155,7 @@ class User extends Database
         return $array;
 
     }
-    //Retourne 
+    //pas finis
 }
 ?>
 
