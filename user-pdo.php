@@ -110,8 +110,9 @@ class User extends Database
         // referesh pour tout unset
         // header(location : ???.php)
     }
-//supprime l'utilisateur 
-    public function delete(){
+    //supprime l'utilisateur 
+    public function delete()
+    {
 
         $reqDel = "DELETE * FROM utilisateurs WHERE login = '$this->_login'";
         $prepDel = parent::bdd()->prepare($reqDel);
@@ -125,8 +126,8 @@ class User extends Database
         // referesh pour tout unset
         // header(location : ???.php)
     }
-    public function update(){
-        
+    public function update()
+    {
     }
 }
 ?>
