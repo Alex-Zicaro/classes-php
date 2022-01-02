@@ -126,9 +126,36 @@ class User extends Database
         // referesh pour tout unset
         // header(location : ???.php)
     }
-    public function update()
+    // mettre à jour un utilisateur
+    public function update($login, $password, $email, $firstname, $lastname)
     {
+        $reqUpd = "UPDATE utilisateurs SET login = ? , password = ? , email = ? , firstname = ? , lastname = ? WHERE id = '$this->_id'";
+        $prepare = parent::bdd()->prepare($reqUpd); // parent::bdd = connexion à la bdd depuis la classe mère 
+        $exe = $prepare->execute(array($login, $password, $email, $firstname, $lastname)); // execute array = déclare les ? de la requête
+        //header location pour le refresh
     }
+    //retourner un bool pour savoir si l'user est co
+    public function isConnected() :Bool {
+        if(isset($this->_id) && isset($this->_login) && isset($this->_email) && isset($this->_firstname) && isset($this->_lastname)){
+            $boolCo = true;
+        } else {
+            $boolCo = false;
+        }
+        return $boolCo;
+    }
+    //Retourne un tableau contenant l’ensemble des informations de l’utilisateur.
+    public function getAllInfo(){
+        
+        $array = [
+            'login' => $this->_login,
+            'email' => $this->_email,
+            'firstname' => $this->_firstname,
+            'lastname' => $this->_lastname
+        ];
+        return $array;
+
+    }
+    //Retourne 
 }
 ?>
 
