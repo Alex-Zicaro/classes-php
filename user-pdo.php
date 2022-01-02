@@ -1,48 +1,213 @@
 <?php
+session_start();
 
+class Database
+{
+
+    // attribut = protected  = ne sortira pas du fichier
+    // attribut = private  = ne sortira pas de la classe
+
+    private static $dbName = 'classes';
+    private static $dbHost = 'localhost';
+    private static $dbUsername = 'root';
+    private static $dbUserPassword = '';
+    private static $bdd = null;
+
+    public function __construct()
+    {
+        die('La fonction d\'initialisation n\'est pas autorisée');
+    }
+    // appel en static ::
+    public static function bdd()
+    { // public = accessible par d'autres fichiers
+        if (self::$bdd == NULL) {
+            try {
+                self::$bdd = new PDO("mysql:host=" . self::$dbHost . ";" . "dbname=" . self::$dbName, self::$dbUsername, self::$dbUserPassword);
+            } catch (PDOException $e) {
+                echo "<h1 class='bg-danger text-center'>La connexion à échouée<h1> 
+                    <h3 class='bg-warning'>Le message d'erreur : " . $e->getMessage() . "</h3>";
+            }
+        } // fin de if
+        return self::$bdd;
+    }
+    public static function deco_bdd()
+    {
+        return self::$bdd = null;
+    }
+}
 // accesseurs : getter (lire un attribut) getAttribute / setter (modifier un attribut) setAttribute
 
-class User 
+class User extends Database
 {
     private $_id;
     public $_login;
     public $_email;
     public $_firstname;
     public $_lastname;
-    protected $dns = "mysql:host=localhost;";
-    protected $dbName = "dbname=classes;";
-    protected $dbCo = "charset=utf8', 'root', ''";
-    protected $bdd = new PDO($dns,$dbName,$dbCo);
-    public function __construct($id, $login, $email, $firstname, $lastname,$dns,$dbName,$dbCo)
+
+
+
+    public function __construct($id, $login, $email, $firstname, $lastname)
     {
         $this->_id = $id;
         $this->_login = $login;
         $this->_email = $email;
         $this->_firstname = $firstname;
         $this->_lastname = $lastname;
-        $this->dns = $dns;
-        $this->dbName = $dbName;
-        $this->dbCo = $dbCo;
-        $bdd = new PDO($dns,$dbName,$dbCo);
     }
 
 
-    public  function register($login, $password, $email, $firstname, $lastname)
+    //Crée l’utilisateur en base de données. Retourne un tableau contenant l’ensemble des informations concernant l’utilisateur créé.
+    public  function register($login, $password, $email, $firstname, $lastname): array
     {
 
-        $sql =
-            'INSERT INTO utilisateurs( login, password, email, firstname, lastname) 
-        VALUE(
-        '  . $_POST['login']  . $_POST["password"] . $_POST["email"] . $_POST["firstname"] . $_POST["lastname"] .  ') ';
 
-        $req = $this->bdd->prepare($sql);
-
-        $formLogin = htmlspecialchars(strip_tags($_POST["formLogin"]));
-        $formPassword = $_POST["password"];
-        if (!empty($formLogin) && !empty($formPassword)) {
-            $reqBddLogin = $this->bdd->prepare("SELECT * FROM utilisateurs WHERE login = :login");
+        //on crypte le mdp
+        $password = password_hash($password, CRYPT_BLOWFISH);
+        //requête pour inserer un utilisateur
+        $insertmbr = parent::bdd()->prepare("INSERT INTO utilisateurs (login, password, email, firstname, lastname) VALUES(?,?,?,?,?)");
+        // Prépare une requête à l'exécution
+        $insertmbr->execute(array($login, $password, $email, $firstname, $lastname)); // Exécute une requête préparée PDO
+        // si la requête est bien executé
+        if ($insertmbr = true) {
+            $sqlUser = "SELECT * FROM utilisateurs WHERE login = '$login'";
+            $req = parent::bdd()->prepare($sqlUser);
+            return $infoUser = $req->fetch();
+            // on return les données de l'utilisateur
+        } else {
+            echo "erreurs de saisie";
         }
     }
-}
 
-// $test = new User();
+    // Connecte l’utilisateur, modifie les attributs présents dans la classe et retourne un tableau contenant l’ensemble de ses informations.
+    public  function connect($login, $password): string
+    {
+
+        $sqlLog = "SELECT * FROM utilisateurs WHERE login = '$login' ";
+        $prepLog = parent::bdd()->prepare($sqlLog);
+        $infoLog = $prepLog->fetch();
+        $passVerif = password_verify($password, $infoLog["password"]);
+        if ($login == $infoLog["login"] && $passVerif == $infoLog["password"]) {
+
+            $this->_id = $infoLog["id"];
+            $this->_login = $infoLog["login"];
+            $this->_lastname = $infoLog["lastname"];
+            $this->_firstname = $infoLog["firstname"];
+            return $infoLog;
+        } else {
+            echo "erreur";
+        }
+    }
+    // déco l'utilisateur 
+    public function disconnect()
+    {
+
+        unset($this->_id);
+        unset($this->_login);
+        unset($this->_email);
+        unset($this->_lastname);
+        unset($this->_firstname);
+        // referesh pour tout unset
+        // header(location : ???.php)
+    }
+//supprime l'utilisateur 
+    public function delete(){
+
+        $reqDel = "DELETE * FROM utilisateurs WHERE login = '$this->_login'";
+        $prepDel = parent::bdd()->prepare($reqDel);
+        $exe = $prepDel->execute();
+
+        unset($this->_id);
+        unset($this->_login);
+        unset($this->_email);
+        unset($this->_lastname);
+        unset($this->_firstname);
+        // referesh pour tout unset
+        // header(location : ???.php)
+    }
+    public function update(){
+        
+    }
+}
+?>
+
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+    </header>
+    <div class="az">
+        <main>
+            <h2 id="crh2inscription" class="text-light"> Remplissez tout les champs</h2>
+            <br /><br />
+            <form method="POST" action="">
+                <table id="">
+                    <tr>
+                        <td class="text-light" align="right">
+                            <label class="" for="login">Login : </label>
+                        </td>
+                        <td>
+                            <input class="" type="text" placeholder="Votre login" name="login" id="login" value="
+                            <?php if (isset($login)) {
+                                echo $login;
+                            } ?>">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="" align="right">
+                            <label class="" for="password">Password : </label>
+                        </td>
+                        <td>
+                            <input class="" type="password" placeholder="Votre password" name="password" id="password">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="" align="right">
+                            <label class="" for="password2">Confirmation du password : </label>
+                        </td>
+                        <td>
+                            <input class="" type="password" placeholder="Confirmation password" name="password2" id="password2">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="" align="right">
+                            <label class="" for="email">Email : </label>
+                        </td>
+                        <td>
+                            <input class="" type="email" placeholder="Votre email" name="email" id="email">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="" align="right">
+                            <label class="" for="firstname">Votre nom </label>
+                        </td>
+                        <td>
+                            <input class="" type="text" placeholder="Votre nom" name="firstname" id="firstname">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="" align="right">
+                            <label class="" for="lastname">Votre prenom : </label>
+                        </td>
+                        <td>
+                            <input class="" type="text" placeholder="Votre prenom" name="lastname" id="lastname">
+                        </td>
+                    </tr>
+
+                </table>
+                <br />
+                <input id="" class="btn btn-primary" t type="submit" name="form" class="" value="Je m'inscris">
+
+            </form>
+            <?php echo (@$erreur) ?>
+</body>
+
+</html>
