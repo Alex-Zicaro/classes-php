@@ -3,7 +3,7 @@ session_start();
 
 class Database
 {
-// On peut redéclarer les propriétés publics ou protégés, mais pas ceux privés
+    // On peut redéclarer les propriétés publics ou protégés, mais pas ceux privés
     // attribut = protected et protected ne peuvent pas être modfier en-dehors de la classe
 
 
@@ -135,8 +135,10 @@ class User extends Database
         //header location pour le refresh
     }
     //retourner un bool pour savoir si l'user est co
-    public function isConnected() :Bool {
-        if(isset($this->_id) && isset($this->_login) && isset($this->_email) && isset($this->_firstname) && isset($this->_lastname)){
+    public function isConnected(): Bool
+    {
+        $boolCo = false;
+        if (isset($this->_id) && isset($this->_login) && isset($this->_email) && isset($this->_firstname) && isset($this->_lastname)) {
             $boolCo = true;
         } else {
             $boolCo = false;
@@ -144,18 +146,79 @@ class User extends Database
         return $boolCo;
     }
     //Retourne un tableau contenant l’ensemble des informations de l’utilisateur.
-    public function getAllInfo(){
-        
-        $array = [
-            'login' => $this->_login,
-            'email' => $this->_email,
-            'firstname' => $this->_firstname,
-            'lastname' => $this->_lastname
-        ];
-        return $array;
+    public function getAllInfo()
+    {
 
+        if ($this->boolCo = true) {
+
+            $array = [
+                'login' => $this->_login,
+                'email' => $this->_email,
+                'firstname' => $this->_firstname,
+                'lastname' => $this->_lastname
+            ];
+            return $array;
+        } else {
+            return false;
+        }
     }
-    //pas finis
+    //Retourne le login de l’utilisateur connecté.
+
+    public function getLogin()
+    {
+        if ($this->boolCo = true) {
+            $user = $this->_login;
+            return $user;
+        } else {
+            return false;
+        }
+    }
+    //Retourne l’adresse email de l’utilisateur connecté.
+    public function getEmail()
+    {
+        if ($this->boolCo = true) {
+
+            $email = $this->_email;
+            return $email;
+        } else {
+            return false;
+        }
+    }
+
+    // retourne le first name de l'utilisateur
+    public function getFirstName()
+    {
+        if ($this->boolCo = true) {
+            $firstname = $this->_firstname;
+            return $firstname;
+        } else {
+            return false;
+        }
+    }
+
+    public function getLastName()
+    {
+        if ($this->boolCo = true) {
+            $lastname = $this->_lastname;
+            return $lastname;
+        } else {
+            return false;
+        }
+    }
+    //Met à jour les attributs de la classe à partir de la base de données.
+    public function refresh()
+    {
+        
+        $sql = "SELECT * FROM utilisateur WHERE login= '$this->_login' ";
+        $prepUser = parent::bdd()->prepare($sql);
+        $user = $prepUser->fetch();
+
+        $user["login"];
+        $user["email"];
+        $user["firstname"];
+        $user["lastname"];
+    }
+
 }
 ?>
 
@@ -166,7 +229,9 @@ class User extends Database
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=, initial-scale=1.0">
-    <title>Document</title>
+    <title>
+        Document
+    </title>
 </head>
 
 <body>
