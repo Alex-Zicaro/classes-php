@@ -114,9 +114,9 @@ class User extends Database
         $repUpd = "UPDATE utilisateurs SET login = ? , password = ? , email = ? , firstname = ? , lastname = ? WHERE id = '$this->_id'";
 
         if (parent::bdd()->query($repUpd) === TRUE) {
-            echo "Record updated successfully";
+            echo "Updated successfully";
         } else {
-            echo "Error updating record: " . parent::bdd()->error;
+            echo "Error updating: " . parent::bdd()->error;
         }
 
         parent::bdd()->close();
@@ -135,7 +135,7 @@ class User extends Database
     // retourne un array contenant l'ensemble des informations de l'utilisateur
     public function getAllinfo()
     {
-        if ($this->boolCo === true) {
+        if ($this->isConnected() === true) {
 
             $array = [
 
@@ -152,7 +152,7 @@ class User extends Database
     // retourne le login de l'utilisateur connecté
     public function getLogin()
     {
-        if ($this->boolCo === true) {
+        if ($this->isConnected() === true) {
             $login = $this->_login;
             return $login;
         } else {
@@ -162,7 +162,7 @@ class User extends Database
     //retourne l'adresse email de l'utilisateur 
     public function getEmail()
     {
-        if ($this->boolCo === true) {
+        if ($this->isConnected() === true) {
             $email = $this->_email;
             return $email;
         } else {
@@ -172,7 +172,7 @@ class User extends Database
     // retourne le firstname de l'utilisateur
     public function getFirstName()
     {
-        if ($this->boolCo === true) {
+        if ($this->isConnected() === true) {
             $firstname = $this->_firstname;
             return $firstname;
         } else {
@@ -182,7 +182,7 @@ class User extends Database
     // retourne la lastname de l'utilisateur
     public function getLastName()
     {
-        if ($this->boolCo === true) {
+        if ($this->isConnected() === true) {
             $lastname = $this->_lastname;
             return $lastname;
         } else {

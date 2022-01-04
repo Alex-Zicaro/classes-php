@@ -5,8 +5,7 @@ class DatabasePDO
 {
     // On peut redéclarer les propriétés publics ou protégés, mais pas ceux privés
     // attribut = protected  ne peuvent pas être modfier en-dehors de la classe
-
-
+    
     private static $dbName = 'classes';
     private static $dbHost = 'localhost';
     private static $dbUsername = 'root';
@@ -151,7 +150,7 @@ class UserPDO extends DatabasePDO
     public function getAllInfo()
     {
 
-        if ($this->boolCo === true) {
+        if ( $this->isConnected() === true) {
 
             $array = [
                 'login' => $this->_login,
@@ -168,7 +167,7 @@ class UserPDO extends DatabasePDO
 
     public function getLogin()
     {
-        if ($this->boolCo === true) {
+        if ($this->isConnected() === true) {
             $user = $this->_login;
             return $user;
         } else {
@@ -178,7 +177,7 @@ class UserPDO extends DatabasePDO
     //Retourne l’adresse email de l’utilisateur connecté.
     public function getEmail()
     {
-        if ($this->boolCo = true) {
+        if ($this->isConnected() === true) {
 
             $email = $this->_email;
             return $email;
@@ -190,7 +189,7 @@ class UserPDO extends DatabasePDO
     // retourne le first name de l'utilisateur
     public function getFirstName()
     {
-        if ($this->boolCo = true) {
+        if ($this->isConnected() === true) {
             $firstname = $this->_firstname;
             return $firstname;
         } else {
@@ -200,7 +199,7 @@ class UserPDO extends DatabasePDO
     // retourne le lastname de l'utilisateur
     public function getLastName()
     {
-        if ($this->boolCo = true) {
+        if ($this->isConnected() === true) {
             $lastname = $this->_lastname;
             return $lastname;
         } else {
