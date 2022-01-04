@@ -189,16 +189,5 @@ class User extends Database
             return false;
         }
     }
-    // met à jour les attributs de la classe à partir de la bdd
-    public function refresh()
-    {
-        $sql = "SELECT * FROM utilisateurs WHERE '$this->_login'";
-        $query = mysqli_query(parent::bdd(), $sql);
-        $user = mysqli_fetch_assoc($query);
 
-        $this->_login = $user["login"];
-        $this->_email = $user["email"];
-        $this->_firstname = $user["firstname"];
-        $this->_lastname = $user["lastname"];
-    }
 }

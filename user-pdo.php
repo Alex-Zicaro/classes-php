@@ -207,17 +207,5 @@ class UserPDO extends DatabasePDO
             return false;
         }
     }
-    //Met à jour les attributs de la classe à partir de la base de données.
-    public function refresh()
-    {
 
-        $sql = "SELECT * FROM utilisateur WHERE login= '$this->_login' ";
-        $prepUser = parent::bdd()->prepare($sql);
-        $user = $prepUser->fetch();
-
-        $this->_login = $user["login"];
-        $this->_email = $user["email"];
-        $this->_firstname = $user["firstname"];
-        $this->_lastname = $user["lastname"];
-    }
 }
