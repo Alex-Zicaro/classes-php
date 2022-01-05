@@ -111,9 +111,10 @@ class User extends Database
     // mettre à jour un user
     public function update($login, $password, $email, $firstname, $lastname)
     {
-        $repUpd = "UPDATE utilisateurs SET login = ? , password = ? , email = ? , firstname = ? , lastname = ? WHERE id = '$this->_id'";
+        $repUpd = "UPDATE utilisateurs SET login = $login , password = $password , email = $email , firstname = $firstname , lastname = $lastname WHERE id = '$this->_id'";
 
         if (parent::bdd()->query($repUpd) === TRUE) {
+            
             echo "Updated successfully";
         } else {
             echo "Error updating: " . parent::bdd()->error;
