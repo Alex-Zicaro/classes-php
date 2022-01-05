@@ -85,7 +85,7 @@ class UserPDO extends DatabasePDO
     public  function connect($login, $password)
     {
 
-        $sqlLog = "SELECT * FROM utilisateurs WHERE login = '$this->_login' ";
+        $sqlLog = "SELECT * FROM utilisateurs WHERE login = '$login' ";
         $prepLog = parent::bdd()->prepare($sqlLog);
         $prepLog->execute();
         $infoLog = $prepLog->fetch();
