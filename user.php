@@ -84,6 +84,7 @@ class User extends Database
             echo "erreur";
         }
     }
+
     //deco l'user
     public function disconnect()
     {

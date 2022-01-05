@@ -86,6 +86,7 @@ class UserPDO extends DatabasePDO
 
         $sqlLog = "SELECT * FROM utilisateurs WHERE login = '$this->_login' ";
         $prepLog = parent::bdd()->prepare($sqlLog);
+        $prepLog->execute();
         $infoLog = $prepLog->fetch();
         $passVerif = password_verify($password, $infoLog["password"]);
         if ($login == $infoLog["login"] && $passVerif == $infoLog["password"]) {
