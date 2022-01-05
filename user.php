@@ -4,7 +4,7 @@ session_start();
 class Database
 {
 
-    private static $_dbHost = "locahost";
+    private static $_dbHost = "localhost";
     private static $_dbUser = "root";
     private static $_dbPassword = "";
     private static $_dbName = "classes";
