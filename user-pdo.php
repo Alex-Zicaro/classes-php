@@ -72,6 +72,7 @@ class UserPDO extends DatabasePDO
         if ($insertUser == true) {
             $sqlUser = "SELECT * FROM utilisateurs WHERE login = '$this->_login'";
             $req = parent::bdd()->prepare($sqlUser);
+            $req->execute();
             $infoUser = $req->fetch();
             return $infoUser;
             // on return les données de l'utilisateur
