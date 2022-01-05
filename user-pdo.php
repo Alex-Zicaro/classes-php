@@ -81,7 +81,7 @@ class UserPDO extends DatabasePDO
         }
     }
 
-    // Connecte l’utilisateur, modifie les attributs présents dans la classe et retourne un tableau contenant l’ensemble de ses informations.
+    // connecte l’utilisateur, et donne aux attributs de la classe les valeurs correspondantes
     public  function connect($login, $password)
     {
 
@@ -96,7 +96,7 @@ class UserPDO extends DatabasePDO
             $this->_login = $infoLog["login"];
             $this->_lastname = $infoLog["lastname"];
             $this->_firstname = $infoLog["firstname"];
-            return $infoLog;
+            
         } else {
             echo "erreur";
         }
