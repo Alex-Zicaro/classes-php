@@ -19,7 +19,7 @@ class Database
         if (self::$_bdd == NULL) {
 
 
-            self::$_bdd = new mysqli("localhost", "root", "", "classes");
+            self::$_bdd = new mysqli(self::$_dbHost, self::$_dbUser, self::$_dbPassword, self::$_dbName);
             if (self::$_bdd->connect_error) {
                 die("Connection failed: " . self::$_bdd->connect_error);
             }
@@ -193,3 +193,4 @@ class User extends Database
     }
 
 }
+

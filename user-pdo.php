@@ -1,11 +1,13 @@
 <?php
 session_start();
+// ob_start();
 
 class DatabasePDO
 {
+    // accesseurs : getter (lire un attribut) getAttribute / setter (modifier un attribut) setAttribute
     // On peut redéclarer les propriétés publics ou protégés, mais pas ceux privés
-    // attribut = protected  ne peuvent pas être modfier en-dehors de la classe
-    
+    // attribut = protected  ne peuvent pas être modfier en-dehors de la classe mere/fille
+
     private static $dbName = 'classes';
     private static $dbHost = 'localhost';
     private static $dbUsername = 'root';
@@ -35,7 +37,7 @@ class DatabasePDO
         return self::$bdd = null;
     }
 }
-// accesseurs : getter (lire un attribut) getAttribute / setter (modifier un attribut) setAttribute
+
 
 class UserPDO extends DatabasePDO
 {
@@ -47,23 +49,28 @@ class UserPDO extends DatabasePDO
 
 
 
-    public function __construct($id, $login, $email, $firstname, $lastname)
+    public function __construct()
     {
-        $this->_id = $id;
-        $this->_login = $login;
-        $this->_email = $email;
-        $this->_firstname = $firstname;
-        $this->_lastname = $lastname;
+        $this->_id;
+        $this->_login;
+        $this->_email;
+        $this->_firstname;
+        $this->_lastname;
     }
 
 
     //Crée l’utilisateur en base de données. Retourne un tableau contenant l’ensemble des informations concernant l’utilisateur créé.
-    public  function register($login, $password, $email, $firstname, $lastname): array
+    public  function register($login, $Postpassword, $email, $firstname, $lastname)
     {
 
+        $login = $_POST["login"];
+        $Postpassword = $_POST["password"];
+        $email = $_POST["email"];
+        $firstname = $_POST["firstname"];
+        $lastname = $_POST["lastname"] ;
 
-        //on crypte le mdp
-        $password = password_hash($password, CRYPT_BLOWFISH);
+        //on crypte le mdp https://fr.wikipedia.org/wiki/Blowfish
+        $password = password_hash($Postpassword, CRYPT_BLOWFISH);
         //requête pour inserer un utilisateur
         $insertUser = parent::bdd()->prepare("INSERT INTO utilisateurs (login, password, email, firstname, lastname) VALUES(?,?,?,?,?)");
         // Prépare une requête à l'exécution
@@ -83,20 +90,24 @@ class UserPDO extends DatabasePDO
 
     // connecte l’utilisateur, et donne aux attributs de la classe les valeurs correspondantes
     public  function connect($login, $password)
-    {
-
-        $sqlLog = "SELECT * FROM utilisateurs WHERE login = '$login' ";
+    {   
+        $login = $_POST["login"] ;
+        $password = $_POST["password"];
+        $sqlLog = "SELECT utilisateurs.login , utilisateurs.password FROM utilisateurs WHERE login = '$login' ";
         $prepLog = parent::bdd()->prepare($sqlLog);
         $prepLog->execute();
-        $infoLog = $prepLog->fetch();
+        $infoLog = $prepLog->fetch(PDO::FETCH_ASSOC);
         $passVerif = password_verify($password, $infoLog["password"]);
         if ($login == $infoLog["login"] && $passVerif == $infoLog["password"]) {
 
-            $this->_id = $infoLog["id"];
+
             $this->_login = $infoLog["login"];
             $this->_lastname = $infoLog["lastname"];
             $this->_firstname = $infoLog["firstname"];
-            
+            @$_SESSION["login"] = $infoLog["login"];
+            @$_SESSION["firstname"] = $infoLog["firstname"];
+            @$_SESSION["lastname"] = $infoLog["lastname"];
+
         } else {
             echo "erreur";
         }
@@ -152,7 +163,7 @@ class UserPDO extends DatabasePDO
     public function getAllInfo()
     {
 
-        if ( $this->isConnected() === true) {
+        if ($this->isConnected() === true) {
 
             $array = [
                 'login' => $this->_login,
@@ -208,5 +219,144 @@ class UserPDO extends DatabasePDO
             return false;
         }
     }
-
 }
+
+?>
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+    </header>
+    <div class="az">
+        <main>
+            <h2 id="crh2inscription" class="text-light"> Remplissez tout les champs</h2>
+            <br /><br />
+            <form method="POST" action="">
+                <table id="">
+                    <tr>
+                        <td class="text-light" align="right">
+                            <label class="" for="login">Login : </label>
+                        </td>
+                        <td>
+                            <input class="" type="text" placeholder="Votre login" name="login" id="login" value="
+                            <?php if (isset($login)) {
+                                echo $login;
+                            } ?>">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="" align="right">
+                            <label class="" for="password">Password : </label>
+                        </td>
+                        <td>
+                            <input class="" type="password" placeholder="Votre password" name="password" id="password">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="" align="right">
+                            <label class="" for="password2">Confirmation du password : </label>
+                        </td>
+                        <td>
+                            <input class="" type="password" placeholder="Confirmation password" name="password2" id="password2">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="" align="right">
+                            <label class="" for="email">Email : </label>
+                        </td>
+                        <td>
+                            <input class="" type="email" placeholder="Votre email" name="email" id="email">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="" align="right">
+                            <label class="" for="firstname">Votre nom </label>
+                        </td>
+                        <td>
+                            <input class="" type="text" placeholder="Votre nom" name="firstname" id="firstname">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="" align="right">
+                            <label class="" for="lastname">Votre prenom : </label>
+                        </td>
+                        <td>
+                            <input class="" type="text" placeholder="Votre prenom" name="lastname" id="lastname">
+                        </td>
+                    </tr>
+
+                </table>
+                <br />
+                <input id="" class="btn btn-primary" t type="submit" name="form" class="" value="Je m'inscris">
+
+            </form>
+            <br> <br> <br>
+            <form method="POST" action="" id="crforconnexion">
+                <table>
+                    <tr>
+                        <td class="crtdco">
+                            <label class="text-light" for="login">Login :</label>
+                        </td>
+                        <td class="crtdco">
+                            <input type="text" name="login" placeholder="Votre Login">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="crtdco">
+                            <label class="text-light" for="password">Password :</label>
+                        </td>
+                        <td class="crtdco">
+                            <input type="password" name="password" placeholder="Votre Password">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="crtdco">
+                            <input class="btn btn-primary" type="submit" name="formconnexion" id="crinputco" value="Se connecter !">
+                        </td>
+                    </tr>
+                </table>
+            </form>
+            <form class="" action="" method="get">
+                <input class="btn btn-primary " name="off" type="submit" value="Déconnexion">
+            </form>
+
+
+
+
+            <?php
+            // déconnexion
+            if (isset($_GET['off'])) {
+
+                session_destroy();
+                header('location: user-pdo..php');
+                exit;
+            }
+
+            ?>
+            <?php
+            if (isset($_POST["form"])) {
+                $user = new UserPDO();
+                $user->register($login, $Postpassword, $email, $firstname, $lastname);
+                header("location : user-pdo.php");
+                exit;
+            }
+            else if(isset($_POST["formconnexion"])){
+                $con = new UserPDO;
+                $con->connect($login,$password);
+                header("location : user-pdo.php");
+                exit;
+            }
+            echo (@$erreur);
+            echo($_SESSION["login"]);
+            ?>
+</body>
+
+</html>
