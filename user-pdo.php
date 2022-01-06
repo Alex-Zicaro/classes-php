@@ -355,7 +355,7 @@ class UserPDO extends DatabasePDO
                 exit;
             }
             echo (@$erreur);
-            echo($_SESSION["login"]);
+            echo(@$_SESSION["login"]);
             ?>
 </body>
 
