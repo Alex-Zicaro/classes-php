@@ -29,7 +29,7 @@ class DatabasePDO
                 echo "<h1 class='bg-danger text-center'>La connexion à échouée<h1> 
                     <h3 class='bg-warning'>Le message d'erreur : " . $e->getMessage() . "</h3>";
             }
-        } // fin de if
+        } // fin du if
         return self::$bdd;
     }
     public static function deco_bdd()
@@ -51,7 +51,6 @@ class UserPDO extends DatabasePDO
 
     public function __construct()
     {
-        $this->_id;
         $this->_login;
         $this->_email;
         $this->_firstname;
@@ -77,7 +76,7 @@ class UserPDO extends DatabasePDO
         $insertUser->execute(array($login, $password, $email, $firstname, $lastname)); // Exécute une requête préparée PDO
         // si la requête est bien executé
         if ($insertUser == true) {
-            $sqlUser = "SELECT * FROM utilisateurs WHERE login = '$this->_login'";
+            $sqlUser = "SELECT * FROM utilisateurs WHERE login = '$login'";
             $req = parent::bdd()->prepare($sqlUser);
             $req->execute();
             $infoUser = $req->fetch();
@@ -93,7 +92,7 @@ class UserPDO extends DatabasePDO
     {   
         $login = $_POST["login"] ;
         $password = $_POST["password"];
-        $sqlLog = "SELECT utilisateurs.login , utilisateurs.password FROM utilisateurs WHERE login = '$login' ";
+        $sqlLog = "SELECT utilisateurs.login , utilisateurs.password ,utilisateurs.email, utilisateurs.firstname, utilisateurs.lastname FROM utilisateurs WHERE login = '$login' ";
         $prepLog = parent::bdd()->prepare($sqlLog);
         $prepLog->execute();
         $infoLog = $prepLog->fetch(PDO::FETCH_ASSOC);
@@ -102,6 +101,7 @@ class UserPDO extends DatabasePDO
 
 
             $this->_login = $infoLog["login"];
+            $this->_email = $infoLog["email"];
             $this->_lastname = $infoLog["lastname"];
             $this->_firstname = $infoLog["firstname"];
             @$_SESSION["login"] = $infoLog["login"];
@@ -115,28 +115,30 @@ class UserPDO extends DatabasePDO
     // déco l'utilisateur 
     public function disconnect()
     {
-
+        session_destroy();
         unset($this->_id);
         unset($this->_login);
         unset($this->_email);
         unset($this->_lastname);
         unset($this->_firstname);
+
         // referesh pour tout unset
         // header(location : ???.php)
     }
     //supprime l'utilisateur 
-    public function delete()
+    public function delete($email)
     {
 
-        $reqDel = "DELETE * FROM utilisateurs WHERE login = '$this->_login'";
+        $reqDel = "DELETE * FROM utilisateurs WHERE login = '$email'";
         $prepDel = parent::bdd()->prepare($reqDel);
         $exe = $prepDel->execute();
-
+        
         unset($this->_id);
         unset($this->_login);
         unset($this->_email);
         unset($this->_lastname);
         unset($this->_firstname);
+        
         // referesh pour tout unset
         // header(location : ???.php);
     }
@@ -239,7 +241,7 @@ class UserPDO extends DatabasePDO
         <main>
             <h2 id="crh2inscription" class="text-light"> Remplissez tout les champs</h2>
             <br /><br />
-            <form method="POST" action="">
+            <form method="POST" action="user-pdo.php">
                 <table id="">
                     <tr>
                         <td class="text-light" align="right">
@@ -299,7 +301,7 @@ class UserPDO extends DatabasePDO
 
             </form>
             <br> <br> <br>
-            <form method="POST" action="" id="crforconnexion">
+            <form method="POST" action="user-pdo.php" id="crforconnexion">
                 <table>
                     <tr>
                         <td class="crtdco">
@@ -335,9 +337,9 @@ class UserPDO extends DatabasePDO
             // déconnexion
             if (isset($_GET['off'])) {
 
-                session_destroy();
-                header('location: user-pdo..php');
-                exit;
+                $user = new UserPDO();
+                $user->disconnect();
+
             }
 
             ?>
@@ -355,7 +357,7 @@ class UserPDO extends DatabasePDO
                 exit;
             }
             echo (@$erreur);
-            echo(@$_SESSION["login"]);
+            var_dump(@$_SESSION);
             ?>
 </body>
 
