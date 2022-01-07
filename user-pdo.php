@@ -49,12 +49,13 @@ class UserPDO extends DatabasePDO
 
 
 
-    public function __construct()
+    public function __construct($login, $email , $firstname , $lastname)
     {
-        $this->_login;
-        $this->_email;
-        $this->_firstname;
-        $this->_lastname;
+        
+        $this->_login = $login;
+        $this->_email = $email;
+        $this->_firstname = $firstname;
+        $this->_lastname = $lastname;
     }
 
 
@@ -94,6 +95,7 @@ class UserPDO extends DatabasePDO
         $password = $_POST["password"];
         $sqlLog = "SELECT utilisateurs.login , utilisateurs.password ,utilisateurs.email, utilisateurs.firstname, utilisateurs.lastname FROM utilisateurs WHERE login = '$login' ";
         $prepLog = parent::bdd()->prepare($sqlLog);
+        
         $prepLog->execute();
         $infoLog = $prepLog->fetch(PDO::FETCH_ASSOC);
         $passVerif = password_verify($password, $infoLog["password"]);
@@ -107,7 +109,7 @@ class UserPDO extends DatabasePDO
             @$_SESSION["login"] = $infoLog["login"];
             @$_SESSION["firstname"] = $infoLog["firstname"];
             @$_SESSION["lastname"] = $infoLog["lastname"];
-
+            
         } else {
             echo "erreur";
         }
@@ -175,7 +177,8 @@ class UserPDO extends DatabasePDO
             ];
             return $array;
         } else {
-            return false;
+            $erreur = "pas connecté";
+            return $erreur;
         }
     }
     //Retourne le login de l’utilisateur connecté.
@@ -224,7 +227,7 @@ class UserPDO extends DatabasePDO
 }
 
 ?>
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="fr">
 
 <head>
@@ -249,9 +252,9 @@ class UserPDO extends DatabasePDO
                         </td>
                         <td>
                             <input class="" type="text" placeholder="Votre login" name="login" id="login" value="
-                            <?php if (isset($login)) {
-                                echo $login;
-                            } ?>">
+                            <//?php if (isset($login)) {
+                                //echo $login;
+                            //} ?>">
                         </td>
                     </tr>
                     <tr>
@@ -335,30 +338,30 @@ class UserPDO extends DatabasePDO
 
             <?php
             // déconnexion
-            if (isset($_GET['off'])) {
+            // if (isset($_GET['off'])) {
 
-                $user = new UserPDO();
-                $user->disconnect();
+            //     $user = new UserPDO($login,$email,$firstname,$lastname);
+            //     $user->disconnect();
 
-            }
+            // }
 
-            ?>
-            <?php
-            if (isset($_POST["form"])) {
-                $user = new UserPDO();
-                $user->register($login, $Postpassword, $email, $firstname, $lastname);
-                header("location : user-pdo.php");
-                exit;
-            }
-            else if(isset($_POST["formconnexion"])){
-                $con = new UserPDO;
-                $con->connect($login,$password);
-                header("location : user-pdo.php");
-                exit;
-            }
-            echo (@$erreur);
-            var_dump(@$_SESSION);
-            ?>
+            // ?>
+            // <?php
+            // if (isset($_POST["form"])) {
+            //     $user = new UserPDO($login,$email,$firstname,$lastname);
+            //     $user->register($login, $Postpassword, $email, $firstname, $lastname);
+            //     header("location : user-pdo.php");
+            //     exit;
+            // }
+            // else if(isset($_POST["formconnexion"])){
+            //     $con = new UserPDO($login,$email,$firstname,$lastname);
+            //     $con->connect($login,$password);
+            //     header("location : user-pdo.php");
+            //     exit;
+            // }
+            // echo (@$erreur);
+            // var_dump(@$_SESSION);
+            // ?>
 </body>
 
-</html>
+</html> -->
